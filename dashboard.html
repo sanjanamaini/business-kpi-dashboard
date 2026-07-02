@@ -66,7 +66,7 @@ svg .val { fill: var(--ink2); font-weight: 600; }
 <div id="tip"></div>
 <script>
 const DATA = {"kpis": {"revenue": 8911407.9, "orders": 18532, "customers": 4338, "aov": 480.87, "date_min": "2010-12-01", "date_max": "2011-12-09"}, "monthly": [{"m": "2010-12", "v": 572713.89}, {"m": "2011-01", "v": 569445.04}, {"m": "2011-02", "v": 447137.35}, {"m": "2011-03", "v": 595500.76}, {"m": "2011-04", "v": 469200.36}, {"m": "2011-05", "v": 678594.56}, {"m": "2011-06", "v": 661213.69}, {"m": "2011-07", "v": 600091.01}, {"m": "2011-08", "v": 645343.9}, {"m": "2011-09", "v": 952838.38}, {"m": "2011-10", "v": 1039318.79}, {"m": "2011-11", "v": 1161817.38}, {"m": "2011-12", "v": 518192.79}], "products": [{"name": "PAPER CRAFT , LITTLE BIRDIE", "v": 168469.6}, {"name": "REGENCY CAKESTAND 3 TIER", "v": 142592.95}, {"name": "WHITE HANGING HEART T-LIGHT HOLDER", "v": 100448.15}, {"name": "JUMBO BAG RED RETROSPOT", "v": 85220.78}, {"name": "MEDIUM CERAMIC TOP STORAGE JAR", "v": 81416.73}, {"name": "POSTAGE", "v": 77803.96}, {"name": "PARTY BUNTING", "v": 68844.33}, {"name": "ASSORTED COLOUR BIRD ORNAMENT", "v": 56580.34}, {"name": "Manual", "v": 53779.93}, {"name": "RABBIT NIGHT LIGHT", "v": 51346.2}], "countries": [{"name": "United Kingdom", "v": 7308391.55}, {"name": "Netherlands", "v": 285446.34}, {"name": "EIRE", "v": 265545.9}, {"name": "Germany", "v": 228867.14}, {"name": "France", "v": 209024.05}, {"name": "Australia", "v": 138521.31}, {"name": "Spain", "v": 61577.11}, {"name": "Switzerland", "v": 56443.95}, {"name": "Belgium", "v": 41196.34}, {"name": "Sweden", "v": 38378.33}], "segments": [{"name": "Champions", "customers": 609, "revenue": 4578426.31}, {"name": "Loyal", "customers": 914, "revenue": 2022948.84}, {"name": "Recent / one-off", "customers": 665, "revenue": 501953.22}, {"name": "At risk", "customers": 646, "revenue": 1040932.69}, {"name": "Hibernating", "customers": 1504, "revenue": 767146.84}]};
-const fmt£ = v => "£" + (v >= 1e6 ? (v/1e6).toFixed(2)+"M" : v >= 1e3 ? (v/1e3).toFixed(0)+"K" : v.toFixed(0));
+const fmtGBP = v => "£" + (v >= 1e6 ? (v/1e6).toFixed(2)+"M" : v >= 1e3 ? (v/1e3).toFixed(0)+"K" : v.toFixed(0));
 const fmtN = v => v.toLocaleString("en-GB");
 const tip = document.getElementById("tip");
 function showTip(e, html) { tip.innerHTML = html; tip.style.opacity = 1;
@@ -78,7 +78,7 @@ const k = DATA.kpis;
 document.getElementById("daterange").textContent =
   `UCI Online Retail dataset · ${k.date_min} to ${k.date_max} · cleaned transactions only`;
 document.getElementById("tiles").innerHTML = [
-  [fmt£(k.revenue), "Total revenue"],
+  [fmtGBP(k.revenue), "Total revenue"],
   [fmtN(k.orders), "Orders"],
   [fmtN(k.customers), "Customers"],
   ["£" + k.aov.toFixed(2), "Avg order value"],
@@ -94,7 +94,7 @@ document.getElementById("tiles").innerHTML = [
   for (let g = 0; g <= 4; g++) {
     const v = max*g/4, yy = y(v);
     grid += `<line x1="${P.l}" y1="${yy}" x2="${W-P.r}" y2="${yy}" stroke="var(--grid)"/>`;
-    labels += `<text x="${P.l-6}" y="${yy+4}" text-anchor="end">${fmt£(v)}</text>`;
+    labels += `<text x="${P.l-6}" y="${yy+4}" text-anchor="end">${fmtGBP(v)}</text>`;
   }
   const path = d.map((p,i) => (i?"L":"M") + x(i) + " " + y(p.v)).join(" ");
   const pts = d.map((p,i) =>
@@ -106,7 +106,7 @@ document.getElementById("tiles").innerHTML = [
     `<svg viewBox="0 0 ${W} ${H}" width="100%">${grid}${labels}
      <path d="${path}" fill="none" stroke="var(--seq)" stroke-width="2"/>${pts}${xticks}</svg>`;
   document.querySelectorAll("#monthly circle[data-m]").forEach(c => {
-    c.addEventListener("mousemove", e => showTip(e, `<b>${c.dataset.m}</b><br>${fmt£(+c.dataset.v)}`));
+    c.addEventListener("mousemove", e => showTip(e, `<b>${c.dataset.m}</b><br>${fmtGBP(+c.dataset.v)}`));
     c.addEventListener("mouseleave", hideTip);
   });
 })();
@@ -121,11 +121,11 @@ function hbars(elId, rows, color) {
     s += `<rect class="bar" x="${P.l}" y="${yy+4}" width="${bw}" height="14" rx="3"
             ${color?`style="fill:${color}"`:""} data-n="${r.name.replace(/"/g,"&quot;")}" data-v="${r.v}"/>
           <text x="${P.l+6}" y="${yy+15}" style="fill:#fff" font-size="10">${r.name}</text>
-          <text class="val" x="${P.l+bw+6}" y="${yy+15}">${fmt£(r.v)}</text>`;
+          <text class="val" x="${P.l+bw+6}" y="${yy+15}">${fmtGBP(r.v)}</text>`;
   });
   document.getElementById(elId).innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%">${s}</svg>`;
   document.querySelectorAll(`#${elId} rect`).forEach(b => {
-    b.addEventListener("mousemove", e => showTip(e, `<b>${b.dataset.n}</b><br>${fmt£(+b.dataset.v)}`));
+    b.addEventListener("mousemove", e => showTip(e, `<b>${b.dataset.n}</b><br>${fmtGBP(+b.dataset.v)}`));
     b.addEventListener("mouseleave", hideTip);
   });
 }
@@ -147,12 +147,12 @@ hbars("countries", DATA.countries);
         data-t="<b>${seg.name}</b><br>${fmtN(seg.customers)} customers (${(cPct*100).toFixed(1)}%)"/>
       <text x="${156+maxW*cPct}" y="${yy+13}">${(cPct*100).toFixed(0)}% of customers</text>
       <rect x="150" y="${yy+18}" width="${Math.max(3,maxW*rPct)}" height="10" rx="3" fill="${segColors[i]}" opacity="0.45"
-        data-t="<b>${seg.name}</b><br>${fmt£(seg.revenue)} revenue (${(rPct*100).toFixed(1)}%)"/>
+        data-t="<b>${seg.name}</b><br>${fmtGBP(seg.revenue)} revenue (${(rPct*100).toFixed(1)}%)"/>
       <text x="${156+maxW*rPct}" y="${yy+27}">${(rPct*100).toFixed(0)}% of revenue</text>`;
   });
   document.getElementById("segments").innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%">${s}</svg>`;
   document.getElementById("seglegend").innerHTML = DATA.segments.map((seg,i) =>
-    `<span style="--c:${segColors[i]}">${seg.name} — ${fmtN(seg.customers)} customers, ${fmt£(seg.revenue)}</span>`).join("");
+    `<span style="--c:${segColors[i]}">${seg.name} — ${fmtN(seg.customers)} customers, ${fmtGBP(seg.revenue)}</span>`).join("");
   document.querySelectorAll("#segments rect").forEach(b => {
     b.addEventListener("mousemove", e => showTip(e, b.dataset.t));
     b.addEventListener("mouseleave", hideTip);

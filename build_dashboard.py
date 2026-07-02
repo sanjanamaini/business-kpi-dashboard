@@ -149,7 +149,7 @@ svg .val { fill: var(--ink2); font-weight: 600; }
 <div id="tip"></div>
 <script>
 const DATA = __DATA__;
-const fmt£ = v => "£" + (v >= 1e6 ? (v/1e6).toFixed(2)+"M" : v >= 1e3 ? (v/1e3).toFixed(0)+"K" : v.toFixed(0));
+const fmtGBP = v => "£" + (v >= 1e6 ? (v/1e6).toFixed(2)+"M" : v >= 1e3 ? (v/1e3).toFixed(0)+"K" : v.toFixed(0));
 const fmtN = v => v.toLocaleString("en-GB");
 const tip = document.getElementById("tip");
 function showTip(e, html) { tip.innerHTML = html; tip.style.opacity = 1;
@@ -161,7 +161,7 @@ const k = DATA.kpis;
 document.getElementById("daterange").textContent =
   `UCI Online Retail dataset · ${k.date_min} to ${k.date_max} · cleaned transactions only`;
 document.getElementById("tiles").innerHTML = [
-  [fmt£(k.revenue), "Total revenue"],
+  [fmtGBP(k.revenue), "Total revenue"],
   [fmtN(k.orders), "Orders"],
   [fmtN(k.customers), "Customers"],
   ["£" + k.aov.toFixed(2), "Avg order value"],
@@ -177,7 +177,7 @@ document.getElementById("tiles").innerHTML = [
   for (let g = 0; g <= 4; g++) {
     const v = max*g/4, yy = y(v);
     grid += `<line x1="${P.l}" y1="${yy}" x2="${W-P.r}" y2="${yy}" stroke="var(--grid)"/>`;
-    labels += `<text x="${P.l-6}" y="${yy+4}" text-anchor="end">${fmt£(v)}</text>`;
+    labels += `<text x="${P.l-6}" y="${yy+4}" text-anchor="end">${fmtGBP(v)}</text>`;
   }
   const path = d.map((p,i) => (i?"L":"M") + x(i) + " " + y(p.v)).join(" ");
   const pts = d.map((p,i) =>
@@ -189,7 +189,7 @@ document.getElementById("tiles").innerHTML = [
     `<svg viewBox="0 0 ${W} ${H}" width="100%">${grid}${labels}
      <path d="${path}" fill="none" stroke="var(--seq)" stroke-width="2"/>${pts}${xticks}</svg>`;
   document.querySelectorAll("#monthly circle[data-m]").forEach(c => {
-    c.addEventListener("mousemove", e => showTip(e, `<b>${c.dataset.m}</b><br>${fmt£(+c.dataset.v)}`));
+    c.addEventListener("mousemove", e => showTip(e, `<b>${c.dataset.m}</b><br>${fmtGBP(+c.dataset.v)}`));
     c.addEventListener("mouseleave", hideTip);
   });
 })();
@@ -204,11 +204,11 @@ function hbars(elId, rows, color) {
     s += `<rect class="bar" x="${P.l}" y="${yy+4}" width="${bw}" height="14" rx="3"
             ${color?`style="fill:${color}"`:""} data-n="${r.name.replace(/"/g,"&quot;")}" data-v="${r.v}"/>
           <text x="${P.l+6}" y="${yy+15}" style="fill:#fff" font-size="10">${r.name}</text>
-          <text class="val" x="${P.l+bw+6}" y="${yy+15}">${fmt£(r.v)}</text>`;
+          <text class="val" x="${P.l+bw+6}" y="${yy+15}">${fmtGBP(r.v)}</text>`;
   });
   document.getElementById(elId).innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%">${s}</svg>`;
   document.querySelectorAll(`#${elId} rect`).forEach(b => {
-    b.addEventListener("mousemove", e => showTip(e, `<b>${b.dataset.n}</b><br>${fmt£(+b.dataset.v)}`));
+    b.addEventListener("mousemove", e => showTip(e, `<b>${b.dataset.n}</b><br>${fmtGBP(+b.dataset.v)}`));
     b.addEventListener("mouseleave", hideTip);
   });
 }
@@ -230,12 +230,12 @@ hbars("countries", DATA.countries);
         data-t="<b>${seg.name}</b><br>${fmtN(seg.customers)} customers (${(cPct*100).toFixed(1)}%)"/>
       <text x="${156+maxW*cPct}" y="${yy+13}">${(cPct*100).toFixed(0)}% of customers</text>
       <rect x="150" y="${yy+18}" width="${Math.max(3,maxW*rPct)}" height="10" rx="3" fill="${segColors[i]}" opacity="0.45"
-        data-t="<b>${seg.name}</b><br>${fmt£(seg.revenue)} revenue (${(rPct*100).toFixed(1)}%)"/>
+        data-t="<b>${seg.name}</b><br>${fmtGBP(seg.revenue)} revenue (${(rPct*100).toFixed(1)}%)"/>
       <text x="${156+maxW*rPct}" y="${yy+27}">${(rPct*100).toFixed(0)}% of revenue</text>`;
   });
   document.getElementById("segments").innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%">${s}</svg>`;
   document.getElementById("seglegend").innerHTML = DATA.segments.map((seg,i) =>
-    `<span style="--c:${segColors[i]}">${seg.name} — ${fmtN(seg.customers)} customers, ${fmt£(seg.revenue)}</span>`).join("");
+    `<span style="--c:${segColors[i]}">${seg.name} — ${fmtN(seg.customers)} customers, ${fmtGBP(seg.revenue)}</span>`).join("");
   document.querySelectorAll("#segments rect").forEach(b => {
     b.addEventListener("mousemove", e => showTip(e, b.dataset.t));
     b.addEventListener("mouseleave", hideTip);
