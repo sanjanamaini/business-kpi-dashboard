@@ -1,20 +1,54 @@
-# Business KPI Dashboard (Online Retail Analysis)
+# Business KPI Dashboard — Online Retail
 
-An exploratory data analysis notebook on the classic UCI "Online Retail" transaction dataset (`Online Retail.xlsx`, 541,909 rows of UK e-commerce invoices, Dec 2010–Dec 2011). Despite the repo name, this is a single Jupyter notebook doing revenue/RFM analysis — there is no dashboard application (no Power BI/Tableau file, no web app) in this repo.
+**Revenue, product, and customer-segment KPIs for a UK online retailer — analysis notebook plus a self-contained interactive dashboard.**
 
-## Tech Stack
+Built on the [UCI Online Retail dataset](https://archive.ics.uci.edu/dataset/352/online+retail): 541,909 raw transactions (Dec 2010 – Dec 2011), cleaned to paid customer transactions.
 
-- Python, pandas
-- matplotlib, seaborn
-- openpyxl (for reading the `.xlsx` source file)
+## The dashboard
 
-## How It Works
+`dashboard.html` is a single self-contained file — open it in any browser, no server, no dependencies, no CDN. Interactive SVG charts (hover for exact values), automatic light/dark theme.
 
-1. **Load & clean**: reads `Online Retail.xlsx`, removes cancelled orders (`InvoiceNo` starting with "C"), removes non-positive quantities, and drops rows with missing `CustomerID` (541,909 → 397,924 rows).
-2. **Revenue calculation**: adds a `TotalPrice = Quantity × UnitPrice` column; total revenue across the cleaned dataset computes to £8,911,407.90.
-3. **Time-series and breakdown charts**: monthly revenue trend, top 10 products by revenue, and top 10 countries by revenue.
-4. **RFM analysis**: computes Recency, Frequency, and Monetary value per customer (`CustomerID`), using one day after the last invoice date (2011-12-10) as the reference date, then charts the top 10 customers by spend, by purchase frequency, and by recency.
+Regenerate it from the source data with:
 
-## Run
+```
+pip install -r requirements.txt
+python build_dashboard.py
+```
 
-Requires `Online Retail.xlsx` in the same directory (included in this repo). Open `main.ipynb` and run all cells; needs `pandas`, `matplotlib`, `seaborn`, `openpyxl` (the notebook itself contains `pip install` cells for these).
+## Headline numbers (computed from the cleaned data)
+
+| | |
+|---|---|
+| Total revenue | **£8,911,407.90** |
+| Orders | 18,532 |
+| Customers | 4,338 |
+| Average order value | £480.87 |
+
+## The insight that matters most
+
+RFM (recency / frequency / monetary) quartile segmentation shows how concentrated this business is:
+
+| Segment | Customers | Revenue | Share of revenue |
+|---|---|---|---|
+| Champions | 609 (14%) | £4.58M | **51%** |
+| Loyal | 914 (21%) | £2.02M | 23% |
+| At risk | 646 (15%) | £1.04M | 12% |
+| Hibernating | 1,504 (35%) | £0.77M | 9% |
+| Recent / one-off | 665 (15%) | £0.50M | 6% |
+
+**Half the revenue comes from 14% of customers.** The 646 "at risk" customers (high past frequency, gone quiet) hold £1.04M of demonstrated spend — that's the retention campaign with the clearest payback. Meanwhile the 1,504 hibernating customers contribute 9% of revenue; win-back spend there should be minimal.
+
+## What's in the repo
+
+```
+main.ipynb           the analysis: cleaning → revenue KPIs → monthly trend →
+                     top products/countries → RFM computation
+build_dashboard.py   aggregates the data and emits dashboard.html
+dashboard.html       the interactive dashboard (committed, ready to open)
+Online Retail.xlsx   source data (UCI)
+requirements.txt
+```
+
+## Tech stack
+
+Python · pandas · openpyxl · matplotlib/seaborn (notebook) · hand-built inline SVG (dashboard — no chart library)
