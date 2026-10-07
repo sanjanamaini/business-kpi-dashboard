@@ -3,57 +3,44 @@ Online Retail dataset. Aggregates are computed here; the HTML renders them as
 inline SVG with no external dependencies, so the file works offline and on
 GitHub Pages as-is.
 
-Run:  pip install pandas openpyxl && python build_dashboard.py
+Since v2 the figures are net merchandise revenue: duplicates removed, postage and
+fees set aside, and every cancellation netted against the purchase it reverses
+(src/retail.py; the effect of each rule is in notebooks/customer_value.ipynb).
+
+Run:  pip install -r requirements.txt && python build_dashboard.py
 """
 import json
+import sys
+from pathlib import Path
 
 import pandas as pd
 
-SRC = "Online Retail.xlsx"
-OUT = "dashboard.html"
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT / "src"))
+import retail as rt  # noqa: E402
+
+SRC = ROOT / "Online Retail.xlsx"
+OUT = ROOT / "dashboard.html"
 
 
-def load_and_clean() -> pd.DataFrame:
-    df = pd.read_excel(SRC)
-    df = df.dropna(subset=["CustomerID"])
-    df = df[(df["Quantity"] > 0) & (df["UnitPrice"] > 0)]
-    df["TotalPrice"] = df["Quantity"] * df["UnitPrice"]
-    df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"])
-    return df
+def load_and_clean() -> tuple:
+    lines, unmatched, _, _ = rt.ledger_clean(rt.load(SRC))
+    lines = lines.rename(columns={"Value": "TotalPrice"})
+    adjustments = unmatched.groupby("CustomerID").apply(lambda u: (u["Quantity"] * u["UnitPrice"]).sum())
+    return lines, adjustments
 
 
-def rfm_segments(df: pd.DataFrame) -> pd.DataFrame:
+def rfm_segments(df: pd.DataFrame, adjustments: pd.Series) -> pd.DataFrame:
     ref_date = df["InvoiceDate"].max() + pd.Timedelta(days=1)
-    rfm = df.groupby("CustomerID").agg(
-        Recency=("InvoiceDate", lambda x: (ref_date - x.max()).days),
-        Frequency=("InvoiceNo", "nunique"),
-        Monetary=("TotalPrice", "sum"),
-    )
-    # Quartile scores: R is better when low, F/M better when high.
-    rfm["R"] = pd.qcut(rfm["Recency"], 4, labels=[4, 3, 2, 1]).astype(int)
-    rfm["F"] = pd.qcut(rfm["Frequency"].rank(method="first"), 4, labels=[1, 2, 3, 4]).astype(int)
-    rfm["M"] = pd.qcut(rfm["Monetary"], 4, labels=[1, 2, 3, 4]).astype(int)
-
-    def label(row):
-        if row.R >= 4 and row.F >= 4:
-            return "Champions"
-        if row.F >= 3 and row.R >= 3:
-            return "Loyal"
-        if row.R >= 3 and row.F <= 2:
-            return "Recent / one-off"
-        if row.R <= 2 and row.F >= 3:
-            return "At risk"
-        return "Hibernating"
-
-    rfm["Segment"] = rfm.apply(label, axis=1)
-    return rfm
+    rfm = rt.rfm_table(df, ref_date, "TotalPrice", adjustments)
+    return rt.rfm_segments(rfm[rfm["Monetary"] > 0])
 
 
-def build_payload(df: pd.DataFrame) -> dict:
+def build_payload(df: pd.DataFrame, adjustments: pd.Series) -> dict:
     monthly = df.groupby(df["InvoiceDate"].dt.to_period("M"))["TotalPrice"].sum()
     top_products = df.groupby("Description")["TotalPrice"].sum().nlargest(10)
     top_countries = df.groupby("Country")["TotalPrice"].sum().nlargest(10)
-    rfm = rfm_segments(df)
+    rfm = rfm_segments(df, adjustments)
     seg = rfm.groupby("Segment").agg(customers=("Segment", "size"), revenue=("Monetary", "sum"))
     seg_order = ["Champions", "Loyal", "Recent / one-off", "At risk", "Hibernating"]
     seg = seg.reindex([s for s in seg_order if s in seg.index])
@@ -64,6 +51,7 @@ def build_payload(df: pd.DataFrame) -> dict:
             "orders": int(df["InvoiceNo"].nunique()),
             "customers": int(df["CustomerID"].nunique()),
             "aov": round(float(df.groupby("InvoiceNo")["TotalPrice"].sum().mean()), 2),
+            "median_order": round(float(df.groupby("InvoiceNo")["TotalPrice"].sum().median()), 2),
             "date_min": str(df["InvoiceDate"].min().date()),
             "date_max": str(df["InvoiceDate"].max().date()),
         },
@@ -86,7 +74,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Online Retail — KPI Dashboard</title>
+<title>Online Retail: KPI Dashboard</title>
 <style>
 :root {
   --surface: #fcfcfb; --page: #f9f9f7;
@@ -133,7 +121,7 @@ svg .val { fill: var(--ink2); font-weight: 600; }
 </head>
 <body>
 <div class="wrap">
-  <h1>Online Retail — KPI Dashboard</h1>
+  <h1>Online Retail: KPI Dashboard</h1>
   <div class="sub" id="daterange"></div>
   <div class="tiles" id="tiles"></div>
   <div class="grid2">
@@ -142,7 +130,7 @@ svg .val { fill: var(--ink2); font-weight: 600; }
     <div class="card"><h2>Top 10 countries by revenue</h2><div id="countries"></div></div>
     <div class="card full"><h2>Customer segments (RFM quartiles)</h2><div id="segments"></div>
       <div class="legend" id="seglegend"></div>
-      <div class="note">Segments from recency/frequency/monetary quartile scores per customer.</div>
+      <div class="note">Segments from recency/frequency/monetary quartile scores per customer. Tested out of sample in notebooks/customer_value.ipynb: of customers labelled At risk in September 2011, 58% bought again within the next 13 weeks.</div>
     </div>
   </div>
 </div>
@@ -159,12 +147,12 @@ function hideTip() { tip.style.opacity = 0; }
 // KPI tiles
 const k = DATA.kpis;
 document.getElementById("daterange").textContent =
-  `UCI Online Retail dataset · ${k.date_min} to ${k.date_max} · cleaned transactions only`;
+  `UCI Online Retail dataset · ${k.date_min} to ${k.date_max} · net merchandise revenue: cancellations netted against the orders they reverse, duplicates removed, postage and fees excluded · December 2011 has 8 trading days`;
 document.getElementById("tiles").innerHTML = [
-  [fmtGBP(k.revenue), "Total revenue"],
+  [fmtGBP(k.revenue), "Net revenue"],
   [fmtN(k.orders), "Orders"],
   [fmtN(k.customers), "Customers"],
-  ["£" + k.aov.toFixed(2), "Avg order value"],
+  ["£" + k.median_order.toFixed(0), "Median order (mean £" + k.aov.toFixed(0) + ")"],
 ].map(([v,l]) => `<div class="tile"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
 
 // Monthly revenue line
@@ -235,7 +223,7 @@ hbars("countries", DATA.countries);
   });
   document.getElementById("segments").innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%">${s}</svg>`;
   document.getElementById("seglegend").innerHTML = DATA.segments.map((seg,i) =>
-    `<span style="--c:${segColors[i]}">${seg.name} — ${fmtN(seg.customers)} customers, ${fmtGBP(seg.revenue)}</span>`).join("");
+    `<span style="--c:${segColors[i]}">${seg.name}: ${fmtN(seg.customers)} customers, ${fmtGBP(seg.revenue)}</span>`).join("");
   document.querySelectorAll("#segments rect").forEach(b => {
     b.addEventListener("mousemove", e => showTip(e, b.dataset.t));
     b.addEventListener("mouseleave", hideTip);
@@ -248,8 +236,8 @@ hbars("countries", DATA.countries);
 
 
 def main():
-    df = load_and_clean()
-    payload = build_payload(df)
+    df, adjustments = load_and_clean()
+    payload = build_payload(df, adjustments)
     html = HTML_TEMPLATE.replace("__DATA__", json.dumps(payload))
     with open(OUT, "w", encoding="utf-8") as f:
         f.write(html)

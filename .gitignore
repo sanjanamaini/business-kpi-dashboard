@@ -1,0 +1,11 @@
+# Cache rebuilt from Online Retail.xlsx on first run
+Online Retail.parquet
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/

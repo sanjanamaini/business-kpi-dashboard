@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Online Retail — KPI Dashboard</title>
+<title>Online Retail: KPI Dashboard</title>
 <style>
 :root {
   --surface: #fcfcfb; --page: #f9f9f7;
@@ -50,7 +50,7 @@ svg .val { fill: var(--ink2); font-weight: 600; }
 </head>
 <body>
 <div class="wrap">
-  <h1>Online Retail — KPI Dashboard</h1>
+  <h1>Online Retail: KPI Dashboard</h1>
   <div class="sub" id="daterange"></div>
   <div class="tiles" id="tiles"></div>
   <div class="grid2">
@@ -59,13 +59,13 @@ svg .val { fill: var(--ink2); font-weight: 600; }
     <div class="card"><h2>Top 10 countries by revenue</h2><div id="countries"></div></div>
     <div class="card full"><h2>Customer segments (RFM quartiles)</h2><div id="segments"></div>
       <div class="legend" id="seglegend"></div>
-      <div class="note">Segments from recency/frequency/monetary quartile scores per customer.</div>
+      <div class="note">Segments from recency/frequency/monetary quartile scores per customer. Tested out of sample in notebooks/customer_value.ipynb: of customers labelled At risk in September 2011, 58% bought again within the next 13 weeks.</div>
     </div>
   </div>
 </div>
 <div id="tip"></div>
 <script>
-const DATA = {"kpis": {"revenue": 8911407.9, "orders": 18532, "customers": 4338, "aov": 480.87, "date_min": "2010-12-01", "date_max": "2011-12-09"}, "monthly": [{"m": "2010-12", "v": 572713.89}, {"m": "2011-01", "v": 569445.04}, {"m": "2011-02", "v": 447137.35}, {"m": "2011-03", "v": 595500.76}, {"m": "2011-04", "v": 469200.36}, {"m": "2011-05", "v": 678594.56}, {"m": "2011-06", "v": 661213.69}, {"m": "2011-07", "v": 600091.01}, {"m": "2011-08", "v": 645343.9}, {"m": "2011-09", "v": 952838.38}, {"m": "2011-10", "v": 1039318.79}, {"m": "2011-11", "v": 1161817.38}, {"m": "2011-12", "v": 518192.79}], "products": [{"name": "PAPER CRAFT , LITTLE BIRDIE", "v": 168469.6}, {"name": "REGENCY CAKESTAND 3 TIER", "v": 142592.95}, {"name": "WHITE HANGING HEART T-LIGHT HOLDER", "v": 100448.15}, {"name": "JUMBO BAG RED RETROSPOT", "v": 85220.78}, {"name": "MEDIUM CERAMIC TOP STORAGE JAR", "v": 81416.73}, {"name": "POSTAGE", "v": 77803.96}, {"name": "PARTY BUNTING", "v": 68844.33}, {"name": "ASSORTED COLOUR BIRD ORNAMENT", "v": 56580.34}, {"name": "Manual", "v": 53779.93}, {"name": "RABBIT NIGHT LIGHT", "v": 51346.2}], "countries": [{"name": "United Kingdom", "v": 7308391.55}, {"name": "Netherlands", "v": 285446.34}, {"name": "EIRE", "v": 265545.9}, {"name": "Germany", "v": 228867.14}, {"name": "France", "v": 209024.05}, {"name": "Australia", "v": 138521.31}, {"name": "Spain", "v": 61577.11}, {"name": "Switzerland", "v": 56443.95}, {"name": "Belgium", "v": 41196.34}, {"name": "Sweden", "v": 38378.33}], "segments": [{"name": "Champions", "customers": 609, "revenue": 4578426.31}, {"name": "Loyal", "customers": 914, "revenue": 2022948.84}, {"name": "Recent / one-off", "customers": 665, "revenue": 501953.22}, {"name": "At risk", "customers": 646, "revenue": 1040932.69}, {"name": "Hibernating", "customers": 1504, "revenue": 767146.84}]};
+const DATA = {"kpis": {"revenue": 8250372.16, "orders": 18275, "customers": 4324, "aov": 451.46, "median_order": 297.64, "date_min": "2010-12-01", "date_max": "2011-12-09"}, "monthly": [{"m": "2010-12", "v": 550010.35}, {"m": "2011-01", "v": 453871.27}, {"m": "2011-02", "v": 435293.24}, {"m": "2011-03", "v": 571192.97}, {"m": "2011-04", "v": 447844.46}, {"m": "2011-05", "v": 647122.77}, {"m": "2011-06", "v": 600081.94}, {"m": "2011-07", "v": 580700.05}, {"m": "2011-08", "v": 613233.42}, {"m": "2011-09", "v": 924528.36}, {"m": "2011-10", "v": 964361.88}, {"m": "2011-11", "v": 1119509.83}, {"m": "2011-12", "v": 342621.62}], "products": [{"name": "REGENCY CAKESTAND 3 TIER", "v": 133496.2}, {"name": "WHITE HANGING HEART T-LIGHT HOLDER", "v": 93780.95}, {"name": "JUMBO BAG RED RETROSPOT", "v": 83219.6}, {"name": "PARTY BUNTING", "v": 67620.53}, {"name": "ASSORTED COLOUR BIRD ORNAMENT", "v": 56336.97}, {"name": "RABBIT NIGHT LIGHT", "v": 51046.03}, {"name": "CHILLI LIGHTS", "v": 45915.41}, {"name": "PAPER CHAIN KIT 50'S CHRISTMAS ", "v": 41543.48}, {"name": "BLACK RECORD COVER FRAME", "v": 38997.41}, {"name": "JUMBO BAG PINK POLKADOT", "v": 36441.68}], "countries": [{"name": "United Kingdom", "v": 6785028.54}, {"name": "Netherlands", "v": 283479.54}, {"name": "EIRE", "v": 246917.98}, {"name": "Germany", "v": 201123.82}, {"name": "France", "v": 181549.74}, {"name": "Australia", "v": 136950.25}, {"name": "Switzerland", "v": 51864.55}, {"name": "Spain", "v": 51764.9}, {"name": "Belgium", "v": 36673.04}, {"name": "Sweden", "v": 36354.41}], "segments": [{"name": "Champions", "customers": 614, "revenue": 4410139.65}, {"name": "Loyal", "customers": 906, "revenue": 1899475.03}, {"name": "Recent / one-off", "customers": 657, "revenue": 321693.79}, {"name": "At risk", "customers": 640, "revenue": 908798.63}, {"name": "Hibernating", "customers": 1504, "revenue": 690578.13}]};
 const fmtGBP = v => "£" + (v >= 1e6 ? (v/1e6).toFixed(2)+"M" : v >= 1e3 ? (v/1e3).toFixed(0)+"K" : v.toFixed(0));
 const fmtN = v => v.toLocaleString("en-GB");
 const tip = document.getElementById("tip");
@@ -76,12 +76,12 @@ function hideTip() { tip.style.opacity = 0; }
 // KPI tiles
 const k = DATA.kpis;
 document.getElementById("daterange").textContent =
-  `UCI Online Retail dataset · ${k.date_min} to ${k.date_max} · cleaned transactions only`;
+  `UCI Online Retail dataset · ${k.date_min} to ${k.date_max} · net merchandise revenue: cancellations netted against the orders they reverse, duplicates removed, postage and fees excluded · December 2011 has 8 trading days`;
 document.getElementById("tiles").innerHTML = [
-  [fmtGBP(k.revenue), "Total revenue"],
+  [fmtGBP(k.revenue), "Net revenue"],
   [fmtN(k.orders), "Orders"],
   [fmtN(k.customers), "Customers"],
-  ["£" + k.aov.toFixed(2), "Avg order value"],
+  ["£" + k.median_order.toFixed(0), "Median order (mean £" + k.aov.toFixed(0) + ")"],
 ].map(([v,l]) => `<div class="tile"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
 
 // Monthly revenue line
@@ -152,7 +152,7 @@ hbars("countries", DATA.countries);
   });
   document.getElementById("segments").innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%">${s}</svg>`;
   document.getElementById("seglegend").innerHTML = DATA.segments.map((seg,i) =>
-    `<span style="--c:${segColors[i]}">${seg.name} — ${fmtN(seg.customers)} customers, ${fmtGBP(seg.revenue)}</span>`).join("");
+    `<span style="--c:${segColors[i]}">${seg.name}: ${fmtN(seg.customers)} customers, ${fmtGBP(seg.revenue)}</span>`).join("");
   document.querySelectorAll("#segments rect").forEach(b => {
     b.addEventListener("mousemove", e => showTip(e, b.dataset.t));
     b.addEventListener("mouseleave", hideTip);

@@ -1,5 +1,12 @@
-pandas>=2.0
-openpyxl>=3.1
-matplotlib>=3.7
-seaborn>=0.12
-jupyter
+# v2, tested with Python 3.9
+pandas==2.3.3
+numpy==2.0.2
+scipy==1.13.1
+scikit-learn==1.6.1
+openpyxl==3.1.5
+pyarrow==21.0.0
+matplotlib==3.9.4
+seaborn==0.13.2
+jupytext==1.19.6
+nbconvert==7.17.1
+ipykernel==6.31.0

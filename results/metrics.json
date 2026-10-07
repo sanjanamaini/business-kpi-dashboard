@@ -1,0 +1,197 @@
+{
+ "raw_rows": 541909,
+ "first_day": "2010-12-01",
+ "last_day": "2011-12-09",
+ "v1_revenue": 8911407.904,
+ "v1_orders": 18532,
+ "v1_customers": 4338,
+ "v1_aov": 480.86595639974104,
+ "clean_revenue": 8250372.160000002,
+ "clean_customers": 4324,
+ "cancellations_netted_value": 447847.86999999976,
+ "manual_corrections_value": 39007.61,
+ "service_value": 149981.254,
+ "duplicates_removed": 5225,
+ "unmatched_cancellations": 1107,
+ "unmatched_cancellations_value": -23847.32,
+ "no_id_rows": 135080,
+ "no_id_value": 1447682.1199999996,
+ "bridge": {
+  "duplicates": 24199.010000000002,
+  "service_lines": 149981.254,
+  "cancelled_purchases": 447847.86999999976,
+  "manual_corrections": 39007.61,
+  "residual": -3.725290298461914e-09
+ },
+ "phantom_value": 284920.19999999995,
+ "phantom_v1_ranks": {
+  "16446": 4,
+  "12346": 10,
+  "15098": 24
+ },
+ "clean_orders": 18275,
+ "clean_aov": 451.4567529411765,
+ "clean_aov_median": 297.64,
+ "dec2011_trading_days": 8,
+ "peak_month": "2011-11",
+ "nov_vs_feb_per_day": 2.374017315846139,
+ "gini": 0.7048886684482797,
+ "top1_share": 0.3022944141918061,
+ "top10_share": 0.6001126202708642,
+ "top14_share": 0.6636246627548409,
+ "top20_share": 0.7366823879863038,
+ "segments_v2": {
+  "At risk": {
+   "customers": 640,
+   "revenue": 908798.63,
+   "share": 0.11041591369422349
+  },
+  "Champions": {
+   "customers": 614,
+   "revenue": 4410139.65,
+   "share": 0.5358168277320939
+  },
+  "Hibernating": {
+   "customers": 1504,
+   "revenue": 690578.13,
+   "share": 0.08390287208201254
+  },
+  "Loyal": {
+   "customers": 906,
+   "revenue": 1899475.03,
+   "share": 0.23077969536201057
+  },
+  "Recent / one-off": {
+   "customers": 657,
+   "revenue": 321693.79,
+   "share": 0.03908469112965944
+  }
+ },
+ "segment_validation": {
+  "At risk": {
+   "customers": 474,
+   "bought_again": 0.5844,
+   "mean_next_quarter_spend": 422.8092,
+   "past_spend": 987.3745,
+   "next_quarter_share": 0.078
+  },
+  "Champions": {
+   "customers": 459,
+   "bought_again": 0.8954,
+   "mean_next_quarter_spend": 2826.9485,
+   "past_spend": 5870.2511,
+   "next_quarter_share": 0.505
+  },
+  "Hibernating": {
+   "customers": 1203,
+   "bought_again": 0.3691,
+   "mean_next_quarter_spend": 226.697,
+   "past_spend": 386.9578,
+   "next_quarter_share": 0.1061
+  },
+  "Loyal": {
+   "customers": 748,
+   "bought_again": 0.7393,
+   "mean_next_quarter_spend": 885.7568,
+   "past_spend": 1660.4941,
+   "next_quarter_share": 0.2578
+  },
+  "Recent / one-off": {
+   "customers": 479,
+   "bought_again": 0.4802,
+   "mean_next_quarter_spend": 284.7732,
+   "past_spend": 499.7526,
+   "next_quarter_share": 0.0531
+  }
+ },
+ "cohort_month1_return_excl_dec2010": 0.18941184707464845,
+ "cohort_month1_return_dec2010": 0.36621315192743764,
+ "bgnbd": {
+  "r": 0.7185972857474162,
+  "alpha": 9.415710727039146,
+  "a": 0.701491498775678,
+  "b": 22372170.792427044,
+  "negll": 22652.551323117805
+ },
+ "nbd": {
+  "r": 0.7187242253531283,
+  "alpha": 9.419603917865384,
+  "negll": 22652.551530427478
+ },
+ "calibration_customers": 3363,
+ "holdout_actual_days": 4441.0,
+ "holdout_pred_days": 3335.798812070524,
+ "gg_corr_x_m": 0.10159628582486797,
+ "gg": {
+  "p": 2.431033636107932,
+  "q": 3.3078157952843754,
+  "gamma": 378.53783070774176,
+  "negll": 13183.587890738965
+ },
+ "gg_population_mean": 398.7485486797511,
+ "contest": {
+  "past spend": {
+   "spearman": 0.5269,
+   "top10_capture": 0.5612,
+   "top20_capture": 0.677,
+   "forecast_total": NaN
+  },
+  "RFM score": {
+   "spearman": 0.5264,
+   "top10_capture": 0.481,
+   "top20_capture": 0.6506,
+   "forecast_total": NaN
+  },
+  "NBD x Gamma-Gamma": {
+   "spearman": 0.5118,
+   "top10_capture": 0.5586,
+   "top20_capture": 0.6928,
+   "forecast_total": 1532456.4795
+  },
+  "gradient-boosted trees": {
+   "spearman": 0.5083,
+   "top10_capture": 0.5601,
+   "top20_capture": 0.6731,
+   "forecast_total": 1878269.948
+  }
+ },
+ "holdout_actual_spend": 2569649.88,
+ "holdout_best_possible_top20": 0.8120415922187811,
+ "scored_segments": {
+  "At risk": {
+   "customers": 640,
+   "past_revenue": 908798.63,
+   "in_model_top20": 124,
+   "expected_spend_ml": 378858.141,
+   "share_of_expected": 0.101
+  },
+  "Champions": {
+   "customers": 614,
+   "past_revenue": 4410139.65,
+   "in_model_top20": 424,
+   "expected_spend_ml": 1912962.301,
+   "share_of_expected": 0.512
+  },
+  "Hibernating": {
+   "customers": 1504,
+   "past_revenue": 690578.13,
+   "in_model_top20": 37,
+   "expected_spend_ml": 334359.802,
+   "share_of_expected": 0.089
+  },
+  "Loyal": {
+   "customers": 906,
+   "past_revenue": 1899475.03,
+   "in_model_top20": 268,
+   "expected_spend_ml": 920571.444,
+   "share_of_expected": 0.246
+  },
+  "Recent / one-off": {
+   "customers": 657,
+   "past_revenue": 321693.79,
+   "in_model_top20": 11,
+   "expected_spend_ml": 189536.836,
+   "share_of_expected": 0.051
+  }
+ }
+}
