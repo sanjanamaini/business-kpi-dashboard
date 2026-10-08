@@ -2,6 +2,15 @@
 
 **A year of a UK online wholesaler's invoices (541,909 lines), cleaned with a ledger that accounts for every pound, segmented by RFM, and tested on the question RFM only gestures at: who will actually buy next quarter?**
 
+**At a glance**
+
+| | |
+|---|---|
+| **Question** | How much did a UK online wholesaler really earn, and which customers will buy next quarter? |
+| **Data** | UCI Online Retail: 541,909 invoice lines, Dec 2010 to Dec 2011 |
+| **Result** | £8.25M net revenue (the first version overstated it by 8%); 58% of customers labelled "At risk" bought again within a quarter |
+| **Stack** | Python, pandas, SciPy, an offline SVG dashboard |
+
 Data: [UCI Online Retail](https://archive.ics.uci.edu/dataset/352/online+retail) (Chen, Sain and Guo 2012; CC BY 4.0), 1 December 2010 to 9 December 2011. Many customers are themselves retailers.
 
 **Notebook:** [`notebooks/customer_value.ipynb`](notebooks/customer_value.ipynb), step by step, every number printed by a cell. **Dashboard:** [`dashboard.html`](dashboard.html), one offline file with hand-built SVG charts.
