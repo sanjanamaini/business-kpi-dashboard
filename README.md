@@ -10,6 +10,7 @@
 | **Data** | UCI Online Retail: 541,909 invoice lines, Dec 2010 to Dec 2011 |
 | **Result** | £8.25M net revenue (the first version overstated it by 8%); 58% of customers labelled "At risk" bought again within a quarter |
 | **Stack** | Python, pandas, SciPy, an offline SVG dashboard |
+| **Project page** | [sanjanamaini.github.io/retail](https://sanjanamaini.github.io/retail/?utm_source=github&utm_medium=readme&utm_campaign=retail) |
 
 Data: [UCI Online Retail](https://archive.ics.uci.edu/dataset/352/online+retail) (Chen, Sain and Guo 2012; CC BY 4.0), 1 December 2010 to 9 December 2011. Many customers are themselves retailers.
 
